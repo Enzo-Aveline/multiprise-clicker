@@ -7,8 +7,16 @@ const AuthScreen = ({ session }) => {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
+  // Vérification de la configuration Supabase
+  const isConfigured = !supabase.supabaseUrl.includes('placeholder')
+
   const handleLogin = async (e) => {
     e.preventDefault()
+    if (!isConfigured) {
+      setMessage('⚠️ Veuillez configurer vos clés Supabase dans un fichier .env.local (voir .env.example)')
+      return
+    }
+    
     setLoading(true)
     setMessage('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -18,6 +26,11 @@ const AuthScreen = ({ session }) => {
 
   const handleSignUp = async (e) => {
     e.preventDefault()
+    if (!isConfigured) {
+      setMessage('⚠️ Veuillez configurer vos clés Supabase dans un fichier .env.local (voir .env.example)')
+      return
+    }
+
     setLoading(true)
     setMessage('')
     const { error } = await supabase.auth.signUp({ email, password })
@@ -27,8 +40,18 @@ const AuthScreen = ({ session }) => {
   }
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
-    if (error) setMessage(error.message)
+    if (!isConfigured) {
+      setMessage('⚠️ Veuillez configurer vos clés Supabase dans un fichier .env.local (voir .env.example)')
+      return
+    }
+    
+    // Alerte car Google Auth nécessite une config spécifique dans Supabase
+    const confirmGoogle = window.confirm("Attention : Google Auth doit être activé et configuré dans votre dashboard Supabase (Google Cloud Console). Avez-vous fait cette configuration ?")
+    
+    if (confirmGoogle) {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+      if (error) setMessage(error.message)
+    }
   }
 
   const handleLogout = async () => {
@@ -48,6 +71,14 @@ const AuthScreen = ({ session }) => {
   return (
     <div className="auth-container">
       <h2>Sauvegarde Cloud</h2>
+      
+      {!isConfigured && (
+        <div className="config-warning" style={{ background: '#ff555522', color: '#ff5555', padding: '10px', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', fontSize: '0.8rem', border: '1px solid #ff5555' }}>
+          ⚠️ Base de données non configurée.<br/>
+          Créez un fichier <code>.env.local</code> avec vos clés Supabase.
+        </div>
+      )}
+
       <form className="auth-form" onSubmit={handleLogin}>
         <input 
           type="email" 

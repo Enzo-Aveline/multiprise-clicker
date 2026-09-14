@@ -43,12 +43,20 @@ function App() {
 
       <div className="tab-content">
         {currentTab === 'game' && (
-          <>
-            <Stats watts={watts} wattsPerSecond={wattsPerSecond} bonusActive={isBonusActive} bonusTimeLeft={bonusTimeLeft} />
-            <GoldenEclair isVisible={isEclairVisible} position={eclairPosition} onClick={handleEclairClick} />
-            <Multiprise onClick={handleClick} />
-            <Boutique watts={watts} buildings={buildings} onBuy={buyBuilding} />
-          </>
+          <div className="game-layout">
+            <div className="game-column-left">
+              <Stats watts={watts} wattsPerSecond={wattsPerSecond} bonusActive={isBonusActive} bonusTimeLeft={bonusTimeLeft} />
+            </div>
+            
+            <div className="game-column-center">
+              <GoldenEclair isVisible={isEclairVisible} position={eclairPosition} onClick={handleEclairClick} />
+              <Multiprise onClick={handleClick} />
+            </div>
+            
+            <div className="game-column-right">
+              <Boutique watts={watts} buildings={buildings} onBuy={buyBuilding} />
+            </div>
+          </div>
         )}
 
         {currentTab === 'leaderboard' && <Leaderboard />}

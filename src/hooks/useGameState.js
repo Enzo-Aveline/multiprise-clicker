@@ -39,8 +39,11 @@ export const useGameState = (session, bonusMultiplier) => {
       const savedTotal = localStorage.getItem('multiprise_total_watts')
       const savedBuildings = localStorage.getItem('multiprise_buildings')
       
-      setWatts(savedWatts !== null ? parseFloat(savedWatts) : 0)
-      setTotalWattsGenerated(savedTotal !== null ? parseFloat(savedTotal) : 0)
+      const parsedWatts = parseFloat(savedWatts)
+      const parsedTotal = parseFloat(savedTotal)
+      
+      setWatts(!isNaN(parsedWatts) ? parsedWatts : 0)
+      setTotalWattsGenerated(!isNaN(parsedTotal) ? parsedTotal : 0)
       
       if (savedBuildings !== null) {
         setBuildings(JSON.parse(savedBuildings))
